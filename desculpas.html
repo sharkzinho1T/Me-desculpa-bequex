@@ -1,0 +1,354 @@
+<title>Me Desculpa?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Pacifico&display=swap">
+
+<style>
+  /* layout: tela única, centralizada, elementos empilhados */
+  :root {
+    --bg: #fff5f7;
+    --card: #ffffff;
+    --fg: #2d1a22;
+    --muted: #9e7a88;
+    --accent: #e85d8a;
+    --accent-soft: #fce4ee;
+    --accent-dark: #c73e6e;
+    --yes-bg: #e85d8a;
+    --yes-fg: #ffffff;
+    --no-bg: #f0e0e8;
+    --no-fg: #9e7a88;
+    --shadow: rgba(232,93,138,0.18);
+    --radius: 18px;
+    color-scheme: light;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #1a0d13;
+      --card: #2a1520;
+      --fg: #f5dce8;
+      --muted: #b88fa0;
+      --accent: #f07aaa;
+      --accent-soft: #3d1a2a;
+      --accent-dark: #f07aaa;
+      --yes-bg: #e85d8a;
+      --yes-fg: #ffffff;
+      --no-bg: #3d1a2a;
+      --no-fg: #b88fa0;
+      --shadow: rgba(232,93,138,0.25);
+      color-scheme: dark;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #1a0d13;
+    --card: #2a1520;
+    --fg: #f5dce8;
+    --muted: #b88fa0;
+    --accent: #f07aaa;
+    --accent-soft: #3d1a2a;
+    --accent-dark: #f07aaa;
+    --yes-bg: #e85d8a;
+    --yes-fg: #ffffff;
+    --no-bg: #3d1a2a;
+    --no-fg: #b88fa0;
+    --shadow: rgba(232,93,138,0.25);
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Nunito', sans-serif;
+    overflow: hidden;
+  }
+
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: max(24px, env(safe-area-inset-top, 0px)) max(24px, env(safe-area-inset-bottom, 0px));
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    min-height: 100%;
+    overflow-y: auto;
+  }
+
+  /* partículas de coração de fundo */
+  .hearts-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  .heart-particle {
+    position: absolute;
+    bottom: -40px;
+    font-size: 20px;
+    opacity: 0;
+    animation: floatUp linear infinite;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(0) rotate(0deg) scale(0.8); opacity: 0; }
+    10% { opacity: 0.5; }
+    90% { opacity: 0.3; }
+    100% { transform: translateY(-110vh) rotate(360deg) scale(1.2); opacity: 0; }
+  }
+
+  /* card principal */
+  .card {
+    position: relative;
+    z-index: 1;
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: 0 8px 48px var(--shadow), 0 2px 12px rgba(0,0,0,0.08);
+    padding: 40px 36px 36px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    transition: transform 0.3s ease;
+  }
+
+  .emoji-big {
+    font-size: 56px;
+    display: block;
+    margin-bottom: 16px;
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .title {
+    font-family: 'Pacifico', cursive;
+    font-size: clamp(22px, 5vw, 28px);
+    color: var(--accent);
+    margin-bottom: 10px;
+    text-wrap: balance;
+  }
+
+  .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 32px;
+    text-wrap: balance;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    position: relative;
+    min-height: 52px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 50px;
+    padding: 14px 32px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+    white-space: nowrap;
+  }
+
+  .btn:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .btn-yes {
+    background: var(--yes-bg);
+    color: var(--yes-fg);
+    box-shadow: 0 4px 16px var(--shadow);
+  }
+
+  .btn-yes:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 24px var(--shadow);
+  }
+
+  .btn-yes:active { transform: scale(0.97); }
+
+  .btn-no {
+    background: var(--no-bg);
+    color: var(--no-fg);
+    position: relative;
+  }
+
+  .btn-no:hover { transform: scale(1.03); }
+
+  /* tela 2: mensagem do coração */
+  #screen-message .subtitle {
+    font-size: 15px;
+    color: var(--fg);
+    line-height: 1.75;
+    background: var(--accent-soft);
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 28px;
+    text-align: left;
+  }
+
+  /* tela 3: sim final */
+  #screen-yes {
+    display: none;
+  }
+
+  #screen-yes .confetti-emoji {
+    font-size: 48px;
+    display: block;
+    margin-bottom: 12px;
+    animation: pop 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97);
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0); opacity: 0; }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .fade-in {
+    animation: fadeIn 0.4s ease forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .heart-particle, .emoji-big, .btn, .card, .btn-no { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<!-- Partículas de coração no fundo -->
+<div class="hearts-bg" id="heartsContainer"></div>
+
+<div class="card" id="mainCard">
+
+  <!-- Tela 1: pergunta inicial -->
+  <div id="screen-1" class="fade-in">
+    <span class="emoji-big">🥺</span>
+    <h1 class="title">Me desculpa?</h1>
+    <p class="subtitle">Eu sei que errei… e quero muito que você me perdoe.</p>
+    <div class="btn-row" id="btnRow1">
+      <button class="btn btn-yes" id="btnSim1" onclick="goToMessage()">Sim 💗</button>
+      <button class="btn btn-no" id="btnNao1" onclick="runAway(this)">Não</button>
+    </div>
+  </div>
+
+  <!-- Tela 2: mensagem -->
+  <div id="screen-message" style="display:none">
+    <span class="emoji-big">💕</span>
+    <h1 class="title">Você me perdoa?</h1>
+    <p class="subtitle">
+      Me desculpa por ser chato, é que não sei como realmente expressar o tanto que amo você de verdade, mais saiba que eu te amo muito e tô sempre querendo aprender a ser melhor pra você.
+    </p>
+    <div class="btn-row" id="btnRow2">
+      <button class="btn btn-yes" id="btnSim2" onclick="goToYes()">Sim 💗</button>
+      <button class="btn btn-no" id="btnNao2" onclick="runAway(this)">Não</button>
+    </div>
+  </div>
+
+  <!-- Tela 3: perdão aceito -->
+  <div id="screen-yes">
+    <span class="confetti-emoji">🎉</span>
+    <span class="emoji-big" style="animation-delay:0.2s">💑</span>
+    <h1 class="title">Obrigado, bequexzinha!</h1>
+    <p class="subtitle" style="color: var(--fg)">
+      Prometo ser melhor pra você todos os dias. Te amo muito, minha bequexzinha! 💗
+    </p>
+  </div>
+
+</div>
+
+<script>
+  // --- Partículas de coração ---
+  const container = document.getElementById('heartsContainer');
+  const emojis = ['💗','💕','💓','💖','🌸','✨'];
+
+  function spawnHeart() {
+    const el = document.createElement('span');
+    el.className = 'heart-particle';
+    el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    el.style.left = Math.random() * 100 + 'vw';
+    el.style.fontSize = (14 + Math.random() * 18) + 'px';
+    const dur = 5 + Math.random() * 7;
+    el.style.animationDuration = dur + 's';
+    el.style.animationDelay = Math.random() * 3 + 's';
+    container.appendChild(el);
+    setTimeout(() => el.remove(), (dur + 3) * 1000);
+  }
+
+  for (let i = 0; i < 12; i++) spawnHeart();
+  setInterval(spawnHeart, 1200);
+
+  // --- Botão "Não" foge ---
+  let noScale = 1;
+  let noAvoid = 0;
+
+  function runAway(btn) {
+    // cresce o botão sim
+    const simBtn = btn.id === 'btnNao1' ? document.getElementById('btnSim1') : document.getElementById('btnSim2');
+    noAvoid++;
+
+    const grow = Math.min(1 + noAvoid * 0.12, 2.0);
+    simBtn.style.transform = `scale(${grow})`;
+    simBtn.style.transition = 'transform 0.3s ease';
+
+    // move o botão não para posição aleatória dentro do card
+    const card = document.getElementById('mainCard');
+    const cardRect = card.getBoundingClientRect();
+    const btnRect = btn.getBoundingClientRect();
+
+    const maxX = cardRect.width - btnRect.width - 32;
+    const maxY = cardRect.height - btnRect.height - 16;
+
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    btn.style.position = 'absolute';
+    btn.style.left = newX + 'px';
+    btn.style.top = newY + 'px';
+    btn.style.transition = 'left 0.25s ease, top 0.25s ease';
+  }
+
+  function resetNoBtn(id) {
+    const btn = document.getElementById(id);
+    btn.style.position = '';
+    btn.style.left = '';
+    btn.style.top = '';
+    noAvoid = 0;
+  }
+
+  function goToMessage() {
+    noAvoid = 0;
+    document.getElementById('screen-1').style.display = 'none';
+    const msg = document.getElementById('screen-message');
+    msg.style.display = 'block';
+    msg.classList.add('fade-in');
+    // reseta btn não
+    setTimeout(() => resetNoBtn('btnNao2'), 10);
+  }
+
+  function goToYes() {
+    document.getElementById('screen-message').style.display = 'none';
+    const yes = document.getElementById('screen-yes');
+    yes.style.display = 'block';
+    yes.classList.add('fade-in');
+    // muita confetti
+    for (let i = 0; i < 20; i++) setTimeout(spawnHeart, i * 150);
+  }
+</script>
